@@ -1,0 +1,518 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.mappin {
+    opacity: 0.4;
+}
+
+.mappin>i,
+.mappin>i:before {
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 5px solid;
+    border-radius: 50%;
+}
+
+.mappin>i:before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    border-bottom-right-radius: 0;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.mappin>i:after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -11px;
+    width: 10px;
+    height: 4px;
+    margin-left: -5px;
+    box-shadow: inset 0 0 2px rgba(255, 255, 255, 1);
+    border-radius: 50%;
+    -webkit-animation: scale-zoom 1s infinite;
+    -moz-animation: scale-zoom 1s infinite;
+    -ms-animation: scale-zoom 1s infinite;
+    animation: scale-zoom 1s infinite;
+}
+
+.mappin .shenzhen {
+    left: -110px;
+    top: 175px;
+    -webkit-transform: scale(2, 2);
+    -moz-transform: scale(2, 2);
+    -ms-transform: scale(2, 2);
+    transform: scale(2, 2);
+}
+
+.mappin .shenzhen,
+.mappin .shenzhen:before,
+.mappin .santiago,
+.mappin .santiago:before {
+    border-color: rgb(208, 128, 73);
+}
+
+.mappin .beijing {
+    left: -102px;
+    top: 126px;
+}
+
+.mappin .beijing,
+.mappin .beijing:before {
+    border-color: rgb(203, 73, 73);
+}
+
+.mappin .dubai {
+    left: -318px;
+    top: 182px;
+}
+
+.mappin .dubai,
+.mappin .dubai:before,
+.mappin .canberra,
+.mappin .canberra:before,
+.mappin .washington,
+.mappin .washington:before {
+    border-color: rgb(104, 176, 94);
+}
+
+.mappin .canberra {
+    left: 13px;
+    top: 368px;
+}
+
+.mappin .washington {
+    left: 486px;
+    top: 132px;
+}
+
+.mappin .losangeles {
+    left: 350px;
+    top: 153px;
+}
+
+.mappin .losangeles,
+.mappin .losangeles:before {
+    border-color: rgb(203, 195, 73);
+}
+
+.mappin .santiago {
+    left: 511px;
+    top: 358px;
+}
+
+@media screen and (min-width: 1281px) and (min-height: 600px) {
+    .mappin .shenzhen {
+        left: -170px;
+        top: 230px;
+    }
+    .mappin .beijing {
+        left: -170px;
+        top: 140px;
+    }
+    .mappin .dubai {
+        left: -272px;
+        top: 70px;
+    }
+    .mappin .canberra {
+        left: -48px;
+        top: 405px;
+    }
+    .mappin .washington {
+        left: 397px;
+        top: 125px;
+    }
+    .mappin .losangeles {
+        left: 470px;
+        top: 250px;
+    }
+    .mappin .santiago {
+        left: 537px;
+        top: 400px;
+    }
+}
+
+@media screen and (min-width: 1367px) and (min-height: 700px) {
+    .mappin .shenzhen {
+        left: -143px;
+        top: 180px;
+    }
+    .mappin .beijing {
+        left: -133px;
+        top: 118px;
+    }
+    .mappin .dubai {
+        left: -376px;
+        top: 186px;
+    }
+    .mappin .canberra {
+        left: -3px;
+        top: 430px;
+    }
+    .mappin .washington {
+        left: 530px;
+        top: 127px;
+    }
+    .mappin .losangeles {
+        left: 373px;
+        top: 148px;
+    }
+    .mappin .santiago {
+        left: 560px;
+        top: 420px;
+    }
+}
+
+@media screen and (min-width: 1441px) and (min-height: 700px) {
+    .mappin .shenzhen {
+        left: -175px;
+    }
+    .mappin .beijing {
+        left: -165px;
+    }
+    .mappin .dubai {
+        left: -435px;
+    }
+    .mappin .canberra {
+        left: -20px;
+    }
+    .mappin .washington {
+        left: 573px;
+    }
+    .mappin .losangeles {
+        left: 398px;
+    }
+    .mappin .santiago {
+        left: 603px;
+    }
+}
+
+@media screen and (min-width: 1601px) and (min-height: 900px) {
+    .mappin .shenzhen {
+        left: -240px;
+        top: 190px;
+    }
+    .mappin .beijing {
+        left: -228px;
+        top: 108px;
+    }
+    .mappin .dubai {
+        left: -552px;
+        top: 190px;
+    }
+    .mappin .canberra {
+        left: -50px;
+        top: 490px;
+    }
+    .mappin .washington {
+        left: 660px;
+        top: 116px;
+    }
+    .mappin .losangeles {
+        left: 444px;
+        top: 142px;
+    }
+    .mappin .santiago {
+        left: 692px;
+        top: 480px;
+    }
+}
+
+@keyframes scale-zoom {
+    form {
+        -moz-transform: scale(1, 1);
+        -ms-transform: scale(1, 1);
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+    to {
+        -moz-transform: scale(5, 5);
+        -ms-transform: scale(5, 5);
+        transform: scale(5, 5);
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes scale-zoom {
+    form {
+        -webkit-transform: scale(1, 1);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: scale(5, 5);
+        opacity: 0;
+    }
+}
+
+.button-tab:focus {
+    background-color: #42a5f5;
+    color: white !important;
+    font-weight: 700;
+    outline: 0;
+}
+
+.button-tab2:focus {
+    background-color: #42a5f5;
+    color: white !important;
+    font-weight: 700;
+    outline: 0;
+}
+
+.leaflet-popup-content p {
+    margin: 0 !important;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 0;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.iconfont {
+    font-family: "iconfont" !important;
+}
+
+.icon-lbs-1 .path1:before {
+    content: "\e902";
+    color: rgb(204, 204, 204);
+}
+
+.icon-lbs-1 .path2:before {
+    content: "\e903";
+    margin-left: -1em;
+    color: rgb(204, 204, 204);
+}
+
+.icon-lbs-1 .path3:before {
+    content: "\e904";
+    margin-left: -1em;
+    color: rgb(204, 204, 204);
+}
+
+.icon-lbs-1 .path4:before {
+    content: "\e905";
+    margin-left: -1em;
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs-2 .path1:before {
+    content: "\e906";
+    color: rgb(204, 204, 204);
+}
+
+.icon-lbs-2 .path2:before {
+    content: "\e907";
+    margin-left: -1em;
+    color: rgb(204, 204, 204);
+}
+
+.icon-lbs-2 .path3:before {
+    content: "\e908";
+    margin-left: -1em;
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs-2 .path4:before {
+    content: "\e909";
+    margin-left: -1em;
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs-3 .path1:before {
+    content: "\e90a";
+    color: rgb(204, 204, 204);
+}
+
+.icon-lbs-3 .path2:before {
+    content: "\e90b";
+    margin-left: -1em;
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs-3 .path3:before {
+    content: "\e90c";
+    margin-left: -1em;
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs-3 .path4:before {
+    content: "\e90d";
+    margin-left: -1em;
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs:before {
+    content: "\e900";
+    color: rgb(0, 216, 0);
+}
+
+.icon-lbs-0:before {
+    content: "\e901";
+    color: #ccc;
+}
+
+.icon-lbs-4:before {
+    content: "\e90e";
+    color: rgb(0, 216, 0);
+}
+
+.icon-zhuanyi:before {
+    content: "\e600";
+}
+
+.icon-icon_delete:before {
+    content: "\e618";
+}
+
+.icon-dingwei:before {
+    content: "\e627";
+}
+
+.icon-zhongzhimima:before {
+    content: "\e682";
+}
+
+.icon-xiugai:before {
+    content: "\e728";
+}
+
+.icon-voltage:before {
+    content: "\e90f";
+}
+
+.icon-ship:before {
+    content: "\e910";
+}
+
+.icon-excavator:before {
+    content: "\e911";
+}
+
+.icon-door:before {
+    content: "\e912";
+}
+
+.icon-share:before {
+    content: "\e913";
+}
+
+.icon-warn:before {
+    content: "\e914";
+}
+
+.icon-code:before {
+    content: "\e915";
+}
+
+.icon-dial:before {
+    content: "\e916";
+}
+
+.icon-engine:before {
+    content: "\e917";
+}
+
+.icon-satellite:before {
+    content: "\e918";
+}
+
+.icon-history:before {
+    content: "\e919";
+}
+
+.icon-alert:before {
+    content: "\e91a";
+}
+
+.icon-oil:before {
+    content: "\e91b";
+}
+
+.icon-blender:before {
+    content: "\e91c";
+}
+
+.icon-POI:before {
+    content: "\e91d";
+}
+
+.icon-fence:before {
+    content: "\e91e";
+}
+
+.icon-transfer:before {
+    content: "\e91f";
+}
+
+.icon-street:before {
+    content: "\e920";
+}
+
+.icon-details:before {
+    content: "\e921";
+}
+
+.icon-playback:before {
+    content: "\e922";
+}
+
+.tree-view {
+    list-style-type: none;
+}
+
+.tree-view li {
+    margin: 5px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.tree-view li::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 10px;
+    height: 2px;
+    background: #000;
+}
+
+.tree-view li::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 2px;
+    height: 100%;
+    background: #000;
+}
+
+.tree-view li span {
+    cursor: pointer;
+}
+
+.tree-view li span:hover {
+    text-decoration: underline;
+}
