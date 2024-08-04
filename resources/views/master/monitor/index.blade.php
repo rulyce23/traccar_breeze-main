@@ -143,7 +143,7 @@
     const apiKeyArcGis =
         "AAPK37277fe16e7b41d3afecd16fa8aae215eCDtJK507py9Oyo1jGsxHMNw1fAR-2uz47nX_65_YrbF-hGqNX8t02iKl0o71b8D";
     const basemapEnum = "arcgis/streets";
-    var map = L.map('map').setView([51.505, -0.09], 2);
+    var map = L.map('map').setView([-6.2000, 106.8167], 5); // Centered on Indonesia
     var markers = {};
     const token = JSON.parse('{!! json_encode($token) !!}');
     var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
@@ -202,12 +202,67 @@
     }).addTo(map);
     L.control.scale().addTo(map);
 
+    // Update current location function
+    function updateCurrentLocation() {
+        var currentLat = map.getCenter().lat;
+        var currentLng = map.getCenter().lng;
+        var currentLocationApiUrl = `http://192.168.1.7:8082/api/server/geocode?latitude=${currentLat}&longitude=${currentLng}`;
+
+        fetch(currentLocationApiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Geocode request failed: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Assuming the data contains a location name
+                var locationName = data.name || 'Unknown location';
+                updateLocationDisplay(locationName);
+                console.log('Current location:', locationName);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    // Update location display on the map
+    function updateLocationDisplay(locationName) {
+        // Remove existing location marker if any
+        if (markers.currentLocation) {
+            map.removeLayer(markers.currentLocation);
+        }
+
+        // Add a new marker for the current location
+        var currentLat = map.getCenter().lat;
+        var currentLng = map.getCenter().lng;
+        var customIcon = L.divIcon({
+            className: 'custom-icon',
+            html: '<img style="width:30px !important" src="{{ asset('storage/icon/marker.png') }}" alt="">',
+            iconSize: [24, 24]
+        });
+
+        var marker = L.marker([currentLat, currentLng], {
+            icon: customIcon
+        }).addTo(map);
+
+        var popupContent = `<div>
+                                <p>Current Location: <span style="color:#808080">${locationName}</span></p>
+                            </div>`;
+        marker.bindPopup(popupContent).openPopup();
+
+        markers.currentLocation = marker; // Save marker for future reference
+    }
+
+    // Fetch initial data
     document.addEventListener("DOMContentLoaded", function() {
         var deviceButtons = document.querySelectorAll('.device-button');
         deviceButtons.forEach(function(button) {
             var deviceId = button.getAttribute("data-id");
             getDataFromApi(deviceId);
         });
+        // Update location every 30 seconds
+        setInterval(updateCurrentLocation, 30000); // 30000 ms = 30 seconds
     });
 
     function formatTanggal(tanggalAwal) {
@@ -225,70 +280,110 @@
         return tanggalHasil;
     }
 
+    function getDataFromApi(deviceId, locationName) {
+    var positionApiUrl = `api/positions/${deviceId}`;
+    var deviceApiUrl = `api/devices/${deviceId}`;
+    var geofencesApiUrl = `api/geofences/`;
 
-    function getDataFromApi(deviceId) {
-        var positionApiUrl = `api/positions/${deviceId}`;
-        var deviceApiUrl = `api/devices/${deviceId}`;
-        fetch(positionApiUrl)
+    // Get credentials from the session or another source
+    var email = '{{ session("email") }}';  // Assuming you are using Blade templating
+    var password = '{{ session("password") }}';
+
+    fetch(positionApiUrl, {
+        headers: {
+            'Authorization': 'Basic ' + btoa(email + ':' + password)
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Request failed: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(post => {
+        fetch(deviceApiUrl, {
+            headers: {
+                'Authorization': 'Basic ' + btoa(email + ':' + password)
+            }
+        })
+        .then(deviceResponse => {
+            if (!deviceResponse.ok) {
+                throw new Error('Request failed: ' + deviceResponse.status);
+            }
+            return deviceResponse.json();
+        })
+        .then(device => {
+            var latitude = post.latitude;
+            var longitude = post.longitude;
+            var name = device[0].name;
+            var imei = device[0].uniqueId;
+            var ignition = post.attributes.ignition ? 'ON' : 'OFF';
+            var lastPositionings = device[0].lastUpdate;
+            var lastPositioning = formatTanggal(lastPositionings);
+            var customIcon = L.divIcon({
+                className: 'custom-icon',
+                html: '<img style="width:30px !important" src="{{ asset('storage/icon/marker.png') }}" alt="">',
+                iconSize: [24, 24]
+            });
+            var marker = L.marker([latitude, longitude], {
+                icon: customIcon
+            }).addTo(map);
+            markers[deviceId] = marker;
+
+            // Update popup content to move "Current Location" below "Date Last Positioning"
+            var popupContent = `<div class="w-[300px]" style="padding:4px 15px">
+                                    <div class="flex justify-between">
+                                        <p style="display: inline-block;font-size: 16px;color: #333;margin-right: 10px;width: 120px;line-height: 24px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">${name}</p>
+                                        <p class="text-end" style="display: inline-block;color: #808080;font-size: 14px;font-weight: 400;padding-right: 10px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;width: 130px;line-height: 24px;">${imei}</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 mb-[10px]">
+                                        <div class="w-[100px] h-[100px] border border-green-500"></div>
+                                        <div class="flex h-full items-center">
+                                            <div class="space-y-2">
+                                                <div class="flex gap-[10px] items-center">
+                                                    <i class="text-[18px] icon-engine"></i>
+                                                    <p class="text-[#00D600] text-[12px]">${ignition}</p>
+                                                </div>
+                                                <div class="flex gap-[10px] items-center">
+                                                    <i class="text-[18px] icon-satellite"></i>
+                                                    <p class="text-[12px]">0</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[12px]">Date Last Positioning: <span style="color:#808080">${lastPositioning}</span></p>
+                                    </div>
+                                    <div>
+                                        <p>Current Location: <span style="color:#808080">${locationName}</span></p>
+                                    </div>
+                                </div>`;
+            marker.bindPopup(popupContent);
+
+            // Fetch and process geofences
+            fetch(geofencesApiUrl, {
+                headers: {
+                    'Authorization': 'Basic ' + btoa(email + ':' + password)
+                }
+            })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Permintaan gagal: ' + response.status);
+                    throw new Error('Geofences request failed: ' + response.status);
                 }
                 return response.json();
-            }).then(post => {
-                // Mengambil data dari /api/devices dan memberi nama alias 'device'
-                fetch(deviceApiUrl)
-                    .then(deviceResponse => {
-                        if (!deviceResponse.ok) {
-                            throw new Error('Permintaan gagal: ' + deviceResponse.status);
-                        }
-                        return deviceResponse.json();
-                    })
-                    .then(device => {
-                        var latitude = post.latitude;
-                        var longitude = post.longitude;
-                        var name = device[0].name;
-                        var imei = device[0].uniqueId;
-                        var ignition = post.attributes.ignition ? 'ON' : 'OFF';
-                        var lastPositionings = device[0].lastUpdate;
-                        var lastPositioning = formatTanggal(lastPositionings);
-                        var customIcon = L.divIcon({
-                            className: 'custom-icon',
-                            html: '<img style="width:30px !important" src="{{ asset('storage/icon/marker.png') }}" alt="">',
-                            iconSize: [24, 24]
-                        });
-                        var marker = L.marker([latitude, longitude], {
-                            icon: customIcon
-                        }).addTo(map);
-                        markers[deviceId] = marker;
-                        var popupContent = `<div class=" w-[300px]" style="padding:4px 15px">
-                                                <div class="flex justify-between">
-                                                    <p
-                                                        style="display: inline-block;font-size: 16px;color: #333;margin-right: 10px;width: 120px;line-height: 24px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">${name}</p>
-                                                    <p class="text-end"
-                                                        style="display: inline-block;color: #808080;font-size: 14px;font-weight: 400;padding-right: 10px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;width: 130px;line-height: 24px;">${imei}</p>
-                                                </div>
-                                                <div class="grid grid-cols-2 mb-[10px]">
-                                                    <div class="w-[100px] h-[100px] border border-green-500"></div>
-                                                    <div class="flex h-full items-center">
-                                                        <div class="space-y-2">
-                                                            <div class="flex gap-[10px] items-center">
-                                                                <i class="text-[18px] icon-engine"></i>
-                                                                <p class="text-[#00D600] text-[12px]">${ignition}</p>
-                                                            </div>
-                                                            <div class="flex gap-[10px] items-center">
-                                                                <i class="text-[18px] icon-satellite"></i>
-                                                                <p class="text-[12px]">0</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <p class="text-[12px]">Last Positioning: <span style="color:#808080">${lastPositioning}</span> </p>
-                                                </div>
-                                            </div>`;
-                        marker.bindPopup(popupContent);
-                        })
+            })
+            .then(geofences => {
+                geofences.forEach(geofence => {
+                    // Process geofence data if needed
+                    console.log(geofence);
+                    // Example: Add geofences to the map
+                    // Here you would create and add polygons or circles based on geofence data
+                });
+            })
+            .catch(geofenceError => {
+                console.error(geofenceError);
+            });
+        })
         .catch(deviceError => {
             console.error(deviceError);
         });
@@ -296,12 +391,11 @@
     .catch(positionError => {
         console.error(positionError);
     });
-    }
+}
 
 
     var deviceButtons = document.querySelectorAll('.device-button');
-    deviceButtons.forEach(function(
-        button) {
+    deviceButtons.forEach(function(button) {
         button.addEventListener("click", function() {
             var deviceId = button.getAttribute("data-id");
             var marker = markers[deviceId];
@@ -312,5 +406,3 @@
         });
     });
 </script>
-
-

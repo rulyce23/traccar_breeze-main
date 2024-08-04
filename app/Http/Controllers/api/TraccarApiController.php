@@ -62,36 +62,37 @@ class TraccarApiController extends Controller
       }
 
 
-    public function devicesById($id)
-    {
+      public function devicesById($id)
+      {
+          $userEmail = session('email');
+          $password = session('password');
 
-    $userName = session('name');
-    $userEmail = session('email');
-    $password = session('password');
+          if (empty($userEmail) || empty($password)) {
+              return response()->json(['error' => 'User credentials are missing'], 401);
+          }
 
+          $response = Http::withBasicAuth($userEmail, $password)
+              ->get("$this->traccarApiUrl/devices?id=" . $id);
 
-      $response = Http::withBasicAuth($userEmail, $password)
-            ->get("$this->traccarApiUrl/devices?id=" . $id);
+          $data = $response->json();
+          return response()->json($data);
+      }
 
-        $data = $response->json();
-        return response()->json($data);
-    }
+      public function devicesById2($id)
+      {
+          $userEmail = session('email');
+          $password = session('password');
 
+          if (empty($userEmail) || empty($password)) {
+              return response()->json(['error' => 'User credentials are missing'], 401);
+          }
 
-    public function devicesById2($id)
-    {
+          $response = Http::withBasicAuth($userEmail, $password)
+              ->get("$this->traccarApiUrl/devices?id=" . $id);
 
-    $userName = session('name');
-    $userEmail = session('email');
-    $password = session('password');
-
-
-      $response = Http::withBasicAuth($this->email, $this->password)
-            ->get("$this->traccarApiUrl/devices?id=" . $id);
-
-        $data = $response->json();
-        return response()->json($data);
-    }
+          $data = $response->json();
+          return response()->json($data);
+      }
 
 
     public function session(Request $request)
