@@ -13,7 +13,7 @@ class AppLayout extends Component
     public $userEmail;
     public $users;
     public $devices;
-
+    public $userDeviceCounts = [];
     /**
      * Create a new component instance.
      */
@@ -28,9 +28,28 @@ class AppLayout extends Component
         $this->userName = session('name');
         $this->userEmail = session('email');
         $this->userPassword = session('password');
+        $this->userToken = session('token');
+
+        // var_dump($this->userEmail, $this->userPassword, $this->userToken); die;
+        $this->calculateDeviceCounts();
 
 
+    }
 
+
+    protected function calculateDeviceCounts()
+    {
+        $userDeviceMap = [];
+
+        foreach ($this->users as $user) {
+            $devicesId = $user->attributes->deviceId; // Adjust based on your device data structure
+            if (!isset($userDeviceMap[$devicesId])) {
+                $userDeviceMap[$devicesId] = 0;
+            }
+            $userDeviceMap[$devicesId]++;
+        }
+
+        $this->userDeviceCounts = $userDeviceMap;
     }
 
     /**
@@ -45,7 +64,9 @@ class AppLayout extends Component
             'userEmail' => $this->userEmail,
             'users' => $this->users,
             'password' => $this->userPassword,
+            'token' => $this->userToken,
             'devices' => $this->devices,
+            'userDeviceCounts' => $this->userDeviceCounts,
         ]);
     }
 }

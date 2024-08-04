@@ -20,7 +20,7 @@ class RedirectIfAuthenticated
         if ($request->hasCookie('login_status')) {
             $status = $request->cookie('login_status');
             if ($status == true) {
-                return redirect()->route('dashboard');
+                return redirect()->route('monitor.index');
             } else {
                 return $next($request);
             }

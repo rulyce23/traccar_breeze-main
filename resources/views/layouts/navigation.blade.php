@@ -115,12 +115,14 @@
             </div>
             </a>
         </div>
-
-            <div class="flex gap-[3px] py-[22px] px-2 items-center text-sm">
+        <div>
+        <a href="{{ route('account.index') }}">
+        <div class="flex gap-[3px] py-[22px] pl-[2px] pr-2 items-center text-sm hover:text-[yellow]">
                 <i class="fa fa-group"></i>
                 <p>Account</p>
             </div>
-
+            </a>
+            </div>
             <!-- <div class="flex gap-[3px] py-[22px] px-2 items-center text-sm">
                 <i class="fa fa-object-group"></i>
                 <p>Geo Fence</p>

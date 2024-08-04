@@ -128,13 +128,15 @@
 
 
         </div>
-        <div id="map" class="h-auto w-full">
-        </div>
+        <div id="map" class="h-auto w-full"></div>
+
 
     </div>
 </x-app-layout>
+
 <script src="{{ asset('leaflet/js/heremap.js') }}"></script>
 <script>
+    // Initialize the map with default settings
     var deviceButtons = document.querySelectorAll('.device-button');
     const accessHereMap = "qmvJdCdDj3IMbgTK1h2BPQ";
     const keyHereMap = "ZeG9ajBDfkV2syfy4tRDfgHEf3VvM6MNHT88KijPrMvcsKPIraHDzJMmdLFK3OJOJxolNJejPUzg7bpZPQ15cg";
@@ -184,6 +186,7 @@
         }),
         "Google Map(Traffic)": googleTraffic,
     };
+    // Add default layer and controls
     googleHybrid.addTo(map);
     L.control.fullscreen({
         position: 'topleft'
@@ -285,12 +288,17 @@
                                                 </div>
                                             </div>`;
                         marker.bindPopup(popupContent);
-                    })
-                    .catch(deviceError => {
-                        console.error(deviceError);
-                    });
-            })
+                        })
+        .catch(deviceError => {
+            console.error(deviceError);
+        });
+    })
+    .catch(positionError => {
+        console.error(positionError);
+    });
     }
+
+
     var deviceButtons = document.querySelectorAll('.device-button');
     deviceButtons.forEach(function(
         button) {
@@ -304,23 +312,5 @@
         });
     });
 </script>
-<script>
-        // Simpan data pengguna ke localStorage
-        function saveUserToLocalStorage(email, name) {
-            localStorage.setItem('userEmail', email);
-            localStorage.setItem('userName', name);
-        }
 
-        // Ambil data dari sesi Laravel
-        const userEmail = '{{ session('email') }}';
-        const userName = '{{ session('name') }}';
 
-        // Simpan data ke localStorage jika tersedia
-        if (userEmail && userName) {
-            saveUserToLocalStorage(userEmail, userName);
-        }
-
-        // Contoh: Menampilkan data yang disimpan di localStorage
-        console.log('User Email:', localStorage.getItem('userEmail'));
-        console.log('User Name:', localStorage.getItem('userName'));
-    </script>

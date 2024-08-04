@@ -5,48 +5,53 @@
             <div class="border-b bg-[white]" x-data="{
                 openTab: 1,
             }" class="p-1">
-
             <table class="min-w-full bg-white border border-gray-300">
     <thead>
         <tr class="border-b bg-gray-100">
             <th class="px-4 py-2 text-left">No.</th>
             <th class="px-4 py-2 text-left">Account</th>
-            <th class="px-4 py-2 text-left">Device Name</th>
-            <th class="px-4 py-2 text-left">IMEI</th>
-            <th class="px-4 py-2 text-left">Model</th>
-            <th class="px-4 py-2 text-left">Time Active</th>
-            <th class="px-4 py-2 text-left">Expired</th>
+            <th class="px-4 py-2 text-left">Account Type</th>
+            <th class="px-4 py-2 text-left">Customer Name</th>
+            <th class="px-4 py-2 text-left">Cell Phone</th>
+            <th class="px-4 py-2 text-left">Contact</th>
+            <th class="px-4 py-2 text-left">Device Quantity</th>
+            <th class="px-4 py-2 text-left">Status</th>
             <th class="px-4 py-2 text-left">Action</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($users as $index => $user)
+        @foreach($userx as $index => $user)
             @php
                 $userDevices = array_filter($devices, function($device) use ($user) {
                     return $device->attributes->userId == $user->id;
                 });
+                $deviceCount = count($userDevices);
             @endphp
-            @if(!empty($userDevices))
-                @foreach($userDevices as $device)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $index + 1 }}</td>
-                        <td class="px-4 py-2">{{ $user->name }}</td>
-                        <td class="px-4 py-2">{{ $device->name }}</td>
-                        <td class="px-4 py-2">{{ $device->uniqueId }}</td>
-                        <td class="px-4 py-2">{{ $device->model }}</td>
-                        <td class="px-4 py-2">{{ $device->lastUpdate }}</td>
-                        <td class="px-4 py-2">{{ $user->expirationTime }}</td>
-                        <td class="px-4 py-2">
-                            <!-- Action buttons or links here -->
-                        </td>
-                    </tr>
-                @endforeach
-            @else
-
-            @endif
+            <tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-2">{{ $index + 1 }}</td>
+                <td class="px-4 py-2">{{ $user->name }}</td>
+                <td class="px-4 py-2">{{ $user->attributes->account_type }}</td>
+                <td class="px-4 py-2">{{ $user->attributes->user_name }}</td>
+                <td class="px-4 py-2">{{ $user->phone }}</td>
+                <td class="px-4 py-2">
+                    @if(!empty($userDevices))
+                        @foreach($userDevices as $device)
+                            {{ $device->contact }}<br>
+                        @endforeach
+                    @else
+                        N/A
+                    @endif
+                </td>
+                <td class="px-4 py-2">{{ $deviceCount }}</td>
+                <td class="px-4 py-2">{{ $user->disabled }}</td>
+                <td class="px-4 py-2">
+                    <!-- Action buttons or links here -->
+                </td>
+            </tr>
         @endforeach
     </tbody>
 </table>
+
 
 
 </x-app-layout>
@@ -201,17 +206,12 @@
                                                 </div>
                                             </div>`;
                         marker.bindPopup(popupContent);
-                        })
-        .catch(deviceError => {
-            console.error(deviceError);
-        });
-    })
-    .catch(positionError => {
-        console.error(positionError);
-    });
+                    })
+                    .catch(deviceError => {
+                        console.error(deviceError);
+                    });
+            })
     }
-
-
     var deviceButtons = document.querySelectorAll('.device-button');
     deviceButtons.forEach(function(
         button) {

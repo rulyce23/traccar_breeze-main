@@ -18,6 +18,11 @@ class ApiAuthMiddleware
     {
         $status = $request->cookie('login_status');
         // dd($status);
+        // $apiToken = session('api_token');
+
+        // if (!$apiToken) {
+        //     return redirect()->back()->withErrors(['error' => 'Authentication details missing']);
+        // }
 
         if ($status == true) {
             return $next($request);

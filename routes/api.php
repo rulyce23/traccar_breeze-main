@@ -1,9 +1,13 @@
 <?php
 
-use App\Http\Controllers\api\TraccarApiController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MonitorController;
+use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\TraccarApiController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,7 +22,8 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
+Route::middleware(['api.auth'])->group(
+    function () {
 Route::get('/server', [TraccarApiController::class, 'server']);
 Route::get('/session', [TraccarApiController::class, 'session']);
 Route::post('/session/token', [TraccarApiController::class, 'sessionToken'])->name('session.token');
@@ -26,10 +31,13 @@ Route::get('/session/socket', [TraccarApiController::class, 'sessionSocket'])->n
 Route::get('/session/openid/auth', [TraccarApiController::class, 'sessionOpenidAuth'])->name('session.auth');
 Route::get('/session/openid/callback', [TraccarApiController::class, 'sessionOpenidCallback'])->name('session.callback');
 Route::get('/devices', [TraccarApiController::class, 'devices']);
+Route::get('/devices2', [TraccarApiController::class, 'devices2']);
 Route::get('/devices/{id}', [TraccarApiController::class, 'devicesById']);
+Route::get('/devices2/{id}', [TraccarApiController::class, 'devicesById2']);
 Route::get('/groups', [TraccarApiController::class, 'groups']);
 Route::get('/positions', [TraccarApiController::class, 'positions']);
 Route::get('/positions/{id}', [TraccarApiController::class, 'positionsById']);
+Route::get('/positions2/{id}', [TraccarApiController::class, 'positionsById2']);
 Route::get('/events/{id}', [TraccarApiController::class, 'events']);
 Route::get('/reports/route', [TraccarApiController::class, 'reportsRoute']);
 Route::get('/reports/summary', [TraccarApiController::class, 'reportsSummary']);
@@ -47,3 +55,5 @@ Route::get('/calendars', [TraccarApiController::class, 'calendars']);
 Route::get('/statistics', [TraccarApiController::class, 'statistics']);
 Route::get('/users', [TraccarApiController::class, 'users']);
 Route::get('/users/{id}', [TraccarApiController::class, 'usersById']);
+}
+);

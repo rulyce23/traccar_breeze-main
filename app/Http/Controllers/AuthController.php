@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -26,9 +27,10 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+
     public function login(Request $request)
     {
-        // Validasi input
+        // Validate input
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -37,7 +39,7 @@ class AuthController extends Controller
         $email = $request->input('email');
         $password = $request->input('password');
 
-        // Kirim permintaan login dengan basic authentication
+        // Send login request with basic authentication
         $response = Http::withHeaders([
             'Accept' => 'application/json',
         ])->asForm()->withBasicAuth($email, $password)
@@ -47,58 +49,43 @@ class AuthController extends Controller
         ]);
 
         if ($response->successful()) {
-            // Ambil cookies dari respon
-            $cookies = $response->cookies();
-
-            // Ekstrak cookie JSESSIONID
-            $token = null;
-            foreach ($cookies as $cookie) {
-                if ($cookie->getName() === 'JSESSIONID') {
-                    $token = $cookie->getValue();
-                    break;
-                }
-            }
+            // Get the value of the JSESSIONID cookie from the response headers
+            $token = $response->header('Set-Cookie');
 
             if ($token) {
-                // Simpan token dan status login sebagai cookies
-                $apiCookie = Cookie::make('JSESSIONID', $token, 60);
-                $loginCookie = Cookie::make('login_status', 1, 60);
-                $domain = "traccar.org"; // Ganti dengan subdomain yang benar
-                $expiration = time() + 3600; // Contoh: cookie kedaluwarsa dalam 1 jam
+                // Extract the JSESSIONID value from the Set-Cookie header
+                preg_match('/JSESSIONID=([^;]+)/', $token, $matches);
+                $jsessionId = $matches[1] ?? null;
 
-                setcookie("JSESSIONID", $token, $expiration, "/", $domain, false, true);
+                if ($jsessionId) {
+                    // Create cookies for API and login status
+                    $apiCookie = Cookie::make('JSESSIONID', $jsessionId, 60);
+                    $loginCookie = Cookie::make('login_status', 1, 60);
 
-                // Ambil detail pengguna setelah login
-                $userResponse = Http::withHeaders([
-                    'Accept' => 'application/json',
-                    'Cookie' => 'JSESSIONID=' . $token,
-                ])->get($this->traccarApiUrl . '/users');
+                    // Get user details after login
+                    $userResponse = Http::withHeaders([
+                        'Accept' => 'application/json',
+                        'Cookie' => 'JSESSIONID=' . $jsessionId,
+                    ])->get($this->traccarApiUrl . '/users');
 
-                if ($userResponse->successful()) {
-                    $userData = $userResponse->json();
-                    $userEmail = $userData[0]['email'] ?? $email;
-                    $userName = $userData[0]['name'] ?? null;
-                    $userPassword = $userData[0]['password'] ?? $password;
+                    if ($userResponse->successful()) {
+                        $userData = $userResponse->json();
+                        $userEmail = $userData[0]['email'] ?? $email;
+                        $userName = $userData[0]['name'] ?? null;
 
-
-                    // Simpan email dan nama pengguna dalam sesi
-                    session([
-                        'email' => $email,
-                        'name' => $userName,
-                        'password' => $password,
-
-                    ]);
-
-                    // Simpan email dan password ke Local Storage melalui JavaScript
-                    echo "
-                        <script>
-                            localStorage.setItem('email', '{$email}');
-                            localStorage.setItem('password', '{$password}');
-                        </script>
-                    ";
+                        // Save user details in session
+                        session([
+                            'email' => $userEmail,
+                            'name' => $userName,
+                            'password' => $password,
+                            'token' => $jsessionId,
+                        ]);
+                        // Redirect to monitor index page
+                        return redirect()->route('monitor.index')
+                            ->withCookie($loginCookie)
+                            ->withCookie($apiCookie);
+                    }
                 }
-
-                return redirect()->route('monitor.index')->withCookie($loginCookie)->withCookie($apiCookie);
             }
         }
 
@@ -106,6 +93,17 @@ class AuthController extends Controller
     }
 
 
+    public function getToken(Request $request)
+    {
+        // Retrieve the token from the session
+        $token = session('token');
+
+        if ($token) {
+            return response()->json(['token' => $token]);
+        } else {
+            return response()->json(['error' => 'No token found'], 404);
+        }
+    }
 
     public function logout(Request $request)
     {

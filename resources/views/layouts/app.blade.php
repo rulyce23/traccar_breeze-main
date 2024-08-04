@@ -15,11 +15,9 @@
     <link rel="stylesheet" href="{{ asset('dist/css/icon.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/icon.css') }}">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gokertanrisever/leaflet-ruler@master/src/leaflet-ruler.css"
-        integrity="sha384-P9DABSdtEY/XDbEInD3q+PlL+BjqPCXGcF8EkhtKSfSTr/dS5PBKa9+/PMkW2xsY" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gokertanrisever/leaflet-ruler@master/src/leaflet-ruler.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'
         rel='stylesheet' />
 
@@ -67,6 +65,8 @@
                 @include('layouts.sidebar')
                 @elseif(request()->is('device'))
                 @include('layouts.sidebar')
+                @elseif(request()->is('account'))
+                @include('layouts.sidebar')
                 @endif
             </aside>
             <div class="flex-auto">
@@ -79,30 +79,40 @@
         </main>
     </div>
     <script>
-        // Simpan data pengguna ke localStorage
-        function saveUserToLocalStorage(email, name) {
-            localStorage.setItem('userEmail', email);
-            localStorage.setItem('userName', name);
-        }
 
-        // Ambil data dari sesi Laravel
+            // Ambil data dari sesi Laravel
         const userEmail = '{{ session('email') }}';
         const userName = '{{ session('name') }}';
+        const userPassword = '{{ session('password') }}';
+        const userToken = '{{ session('token') }}';
+
+
+        // Simpan data pengguna ke localStorage
+        function saveUserToLocalStorage(email, name,password,token) {
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userPassword', password);
+            localStorage.setItem('userToken', token);
+
+        }
+
+
 
         // Simpan data ke localStorage jika tersedia
-        if (userEmail && userName) {
-            saveUserToLocalStorage(userEmail, userName);
+        if (userEmail && userName && userPassword && userToken) {
+            saveUserToLocalStorage(userEmail, userName, userPassword, userToken);
         }
 
         // Contoh: Menampilkan data yang disimpan di localStorage
         console.log('User Email:', localStorage.getItem('userEmail'));
         console.log('User Name:', localStorage.getItem('userName'));
+        console.log('User Password:', localStorage.getItem('userPassword'));
+        console.log('User Token:', localStorage.getItem('userToken'));
+
     </script>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://cdn.jsdelivr.net/gh/gokertanrisever/leaflet-ruler@master/src/leaflet-ruler.js"
-        integrity="sha384-N2S8y7hRzXUPiepaSiUvBH1ZZ7Tc/ZfchhbPdvOE5v3aBBCIepq9l+dBJPFdo1ZJ" crossorigin="anonymous">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gokertanrisever/leaflet-ruler@master/src/leaflet-ruler.js">
     </script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
@@ -110,7 +120,6 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-plugins/layer/tile/Google.js"></script>
     <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
     <script src="https://unpkg.com/esri-leaflet-vector@4.1.0/dist/esri-leaflet-vector.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
         integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous">
     </script>

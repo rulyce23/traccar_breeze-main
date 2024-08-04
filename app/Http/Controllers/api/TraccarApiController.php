@@ -15,8 +15,10 @@ class TraccarApiController extends Controller
     public function __construct()
     {
         $this->traccarApiUrl = env('TRACCAR_API_URL');
-        // $this->username = env('TRACCAR_USERNAME');
-        // $this->password = env('TRACCAR_PASSWORD');
+        $this->username = env('TRACCAR_USERNAME');
+        $this->email = 'admin@example.com';
+        $this->password ='admin';
+
     }
     public function server()
     {
@@ -38,6 +40,28 @@ class TraccarApiController extends Controller
         return response()->json($data);
      }
 
+
+     public function devices2()
+     {
+         $userName = session('name');
+         $userEmail = session('email');
+         $password = session('password');
+         $token = session('token');
+
+        //  if (empty($userEmail) || empty($password) || empty($userName)) {
+        //     return response()->json(['error' => 'Authentication details missing'], 400);
+        // }
+
+
+       $response = Http::withBasicAuth($this->email, $this->password)
+             ->get("$this->traccarApiUrl/devices");
+
+             $data = $response->json();
+
+         return response()->json($data);
+      }
+
+
     public function devicesById($id)
     {
 
@@ -52,6 +76,23 @@ class TraccarApiController extends Controller
         $data = $response->json();
         return response()->json($data);
     }
+
+
+    public function devicesById2($id)
+    {
+
+    $userName = session('name');
+    $userEmail = session('email');
+    $password = session('password');
+
+
+      $response = Http::withBasicAuth($this->email, $this->password)
+            ->get("$this->traccarApiUrl/devices?id=" . $id);
+
+        $data = $response->json();
+        return response()->json($data);
+    }
+
 
     public function session(Request $request)
     {
@@ -77,6 +118,8 @@ class TraccarApiController extends Controller
         $data = $response->json();
         return response()->json($data);
     }
+
+
     public function sessionSocket()
     {
         $response = Http::get("$this->traccarApiUrl/socket");
@@ -137,19 +180,64 @@ class TraccarApiController extends Controller
         dd($data);
         return response()->json($data);
     }
-    public function positionsById($id)
+
+    public function positionsById(Request $request, $id)
     {
         $userName = session('name');
+        $userPassword = session('password');
         $userEmail = session('email');
-        $password = session('password');
+        $userToken = session('token');
 
+        // Fallback: Check if credentials are passed in the request
+        if (!$userName || !$userPassword || !$userEmail || !$userToken) {
+            $userName = $request->header('X-User-Name');
+            $userPassword = $request->header('X-User-Password');
+            $userEmail = $request->header('X-User-Email');
+            $userToken = $request->header('X-User-Token');
+        }
 
-          $response = Http::withBasicAuth($userEmail, $password)
+        // Check if credentials are still missing
+        if (!$userName || !$userPassword || !$userEmail || !$userToken) {
+            return response()->json(['error' => 'User credentials are missing'], 400);
+        }
+
+        $response = Http::withBasicAuth($userEmail, $userPassword)
             ->get("$this->traccarApiUrl/positions?deviceId=" . $id);
+
+        // Check if the response is successful
+        if (!$response->successful()) {
+            return response()->json(['error' => 'Error fetching data from Traccar API'], $response->status());
+        }
 
         $data = $response->json();
         return response()->json($data[0]);
     }
+
+
+public function positionsById2($id)
+{
+
+    // Check if session values are set
+    // if (is_null($userName) || is_null($userPassword)) {
+    //     return response()->json(['error' => 'User credentials are missing in session'], 400);
+    // }
+
+    $response = Http::withBasicAuth($this->email,  $this->password)
+        ->get("$this->traccarApiUrl/positions?deviceId=" . $id);
+
+        // echo '<pre>';
+        // var_dump($response); die;
+
+    // Check if the response is successful
+    if (!$response->successful()) {
+        return response()->json(['error' => 'Error fetching data from Traccar API'], $response->status());
+    }
+
+    $data = $response->json();
+    return response()->json($data);
+}
+
+
     public function events()
     {
         $userName = session('name');
@@ -359,6 +447,26 @@ class TraccarApiController extends Controller
         $data = $response->json();
         return response()->json($data);
      }
+
+
+     public function users2()
+     {
+         $userName = session('name');
+         $userEmail = session('email');
+         $password = session('password');
+
+         if (empty($userEmail) || empty($password) || empty($userName)) {
+            return response()->json(['error' => 'Authentication details missing'], 400);
+        }
+
+
+       $response = Http::withBasicAuth($userName, $password)
+             ->get("$this->traccarApiUrl/users");
+
+             $data = $response->json();
+
+         return response()->json($data);
+      }
 
 
     public function usersById($id)
