@@ -34,6 +34,10 @@
                     </div>
                 </div>
             </div>
+            <div class="mb-5 flex items-center">
+                <input type="checkbox" id="remember_me" name="remember" class="mr-2">
+                <label for="remember_me" class="text-sm" style="color:white;">Remember Me</label>
+            </div>
             <div class="bg-[#4d94dd] px-3 py-[6px] ">
                 <button class=" w-full text-white text-center text-[20px] leading-[38px] border-none">
                     Login
