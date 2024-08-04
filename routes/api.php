@@ -5,7 +5,7 @@ use App\Http\Controllers\MonitorController;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\TraccarApiController;
+use App\Http\Controllers\api\TraccarApiController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 /*
