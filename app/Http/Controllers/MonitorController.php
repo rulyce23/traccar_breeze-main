@@ -50,10 +50,19 @@ if(!empty($query)){
  return view('master.monitor.index',['userName'=> $userName,'userEmail'=>$userEmail, 'userPassword'=>$userPassword, 'users'=>$users, 'devices'=>$devices, 'token'=>$token, 'now'=>$now]);
 }else{
     $controller = new TraccarApiController();
-        $dataDevices =  $controller->devices();
+        // Fetch devices and users from Traccar API
+        $dataDevices = $controller->devices();
         $dataUsers = $controller->users();
+    
+        // Check if response is redirect (for example, to login)
+        if ($dataDevices instanceof \Illuminate\Http\RedirectResponse || $dataUsers instanceof \Illuminate\Http\RedirectResponse) {
+            return $dataDevices;
+        }
+    
+        // Decode JSON responses into arrays
         $users = $dataUsers->getData();
         $devices = $dataDevices->getData();
+    
         $token = session('token');
         $now = Carbon::now();
         $userName = session('name');
