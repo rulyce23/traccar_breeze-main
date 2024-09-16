@@ -4,7 +4,87 @@
 .mappin {
     opacity: 0.4;
 }
+.advanced-search-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
+.advanced-search-container input,
+.advanced-search-container select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 180px;
+}
+
+.advanced-search-container label {
+    display: flex;
+    align-items: center;
+}
+
+.search-button,
+.reset-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.search-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.reset-button {
+    background-color: #d6d8db;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #f4f4f4;
+    cursor: pointer;
+}
+
+.no-data {
+    text-align: center;
+    padding: 20px;
+}
+
+#userTable thead th {
+    background-color: #007bff;
+    color: white;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: left;
+}
+
+.dataTables_wrapper .dataTables_info {
+    float: left;
+    padding-top: 8px;
+}
 .mappin>i,
 .mappin>i:before {
     position: absolute;

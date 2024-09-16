@@ -6,6 +6,7 @@ use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\api\TraccarApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,7 +56,15 @@ Route::middleware(['api.auth'])->group(
         Route::get('/tree', [MonitorController::class, 'tree']);
         Route::get('/device', [DeviceController::class, 'create'])->name('device.create');
         Route::post('/device', [DeviceController::class, 'store'])->name('device.store');
+        Route::put('/device/{id}', [DeviceController::class, 'update'])->name('device.update');
+       Route::get('/device/models', [DeviceController::class, 'getDevicesModel']);
+        Route::get('/device/users', [DeviceController::class, 'getUsersModel']);
+        Route::delete('/devices/{id}', [DeviceController::class, 'destroy'])->name('device.destroy');
+    //  Route::get('/device/user', [DeviceController::class, 'getDevicesUser']);
+       // Route::get('/device/status', [DeviceController::class, 'getDevicesStatus']);
         Route::resource('/device', DeviceController::class);
+        Route::get('/device', [DeviceController::class, 'index'])->name('device.index');
+        Route::get('/account', [AccountController::class, 'index'])->name('account.index');
         Route::get('/account', [AccountController::class, 'create'])->name('account.create');
         Route::post('/account', [AccountController::class, 'store'])->name('account.store');
         Route::get('/api/token', [AuthController::class, 'getToken']);
@@ -80,6 +89,7 @@ Route::middleware(['api'])->group(
         Route::get('/tree', [MonitorController::class, 'tree']);
         Route::get('/device', [DeviceController::class, 'create'])->name('device.create');
         Route::post('/device', [DeviceController::class, 'store'])->name('device.store');
+        Route::delete('/devices/{id}', [DeviceController::class, 'destroy'])->name('device.destroy');
         Route::resource('/device', DeviceController::class);
         Route::get('/account', [AccountController::class, 'create'])->name('account.create');
         Route::post('/account', [AccountController::class, 'store'])->name('account.store');
@@ -87,7 +97,6 @@ Route::middleware(['api'])->group(
         Route::post('/account/search', [AccountController::class, 'search'])
         ->name('account.search')
         ->middleware('api.auth');
-
 
         Route::post('/monitor', [MonitorController::class, 'index'])
         ->name('monitor.index')

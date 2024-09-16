@@ -1,3 +1,9 @@
+
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 <x-guest-layout>
     <div class="w-[318px] fixed left-1/2 top-1/2 -ml-[159px] -mt-[185px] z-10">
         <span class="mappin">

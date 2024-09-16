@@ -34,6 +34,11 @@ class TraccarApiController extends Controller
         $userEmail = session('email');
         $password = session('password');
 
+    // Cek apakah session autentikasi kosong
+    if (empty($userEmail) || empty($password) || empty($userName)) {
+        // Jika session kosong, redirect ke halaman login
+        return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+    }
       $response = Http::withBasicAuth($userEmail, $password)
             ->get("$this->traccarApiUrl/devices");
         $data = $response->json();
@@ -48,9 +53,12 @@ class TraccarApiController extends Controller
          $password = session('password');
          $token = session('token');
 
-        //  if (empty($userEmail) || empty($password) || empty($userName)) {
-        //     return response()->json(['error' => 'Authentication details missing'], 400);
-        // }
+        
+    // Cek apakah session autentikasi kosong
+    if (empty($userEmail) || empty($password) || empty($userName)) {
+        // Jika session kosong, redirect ke halaman login
+        return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+    }
 
 
        $response = Http::withBasicAuth($this->email, $this->password)
@@ -64,13 +72,14 @@ class TraccarApiController extends Controller
 
       public function devicesById($id)
       {
-          $userEmail = session('email');
-          $password = session('password');
-
-          if (empty($userEmail) || empty($password)) {
-              return response()->json(['error' => 'User credentials are missing'], 401);
-          }
-
+        $userName = session('name');
+        $userEmail = session('email');
+        $password = session('password');
+    // Cek apakah session autentikasi kosong
+    if (empty($userEmail) || empty($password) || empty($userName)) {
+        // Jika session kosong, redirect ke halaman login
+        return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+    }
           $response = Http::withBasicAuth($userEmail, $password)
               ->get("$this->traccarApiUrl/devices?id=" . $id);
 
@@ -442,10 +451,17 @@ public function positionsById2($id)
     $userEmail = session('email');
     $password = session('password');
 
+    // Cek apakah session autentikasi kosong
+    if (empty($userEmail) || empty($password) || empty($userName)) {
+        // Jika session kosong, redirect ke halaman login
+        return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+    }
 
       $response = Http::withBasicAuth($userEmail, $password)
             ->get("$this->traccarApiUrl/users");
         $data = $response->json();
+
+        
         return response()->json($data);
      }
 
@@ -456,10 +472,12 @@ public function positionsById2($id)
          $userEmail = session('email');
          $password = session('password');
 
-         if (empty($userEmail) || empty($password) || empty($userName)) {
-            return response()->json(['error' => 'Authentication details missing'], 400);
-        }
-
+       
+    // Cek apakah session autentikasi kosong
+    if (empty($userEmail) || empty($password) || empty($userName)) {
+        // Jika session kosong, redirect ke halaman login
+        return redirect()->route('login')->with('error', 'Session expired. Please login again.');
+    }
 
        $response = Http::withBasicAuth($userName, $password)
              ->get("$this->traccarApiUrl/users");
@@ -476,6 +494,9 @@ public function positionsById2($id)
         $userEmail = session('email');
         $password = session('password');
 
+        if (empty($userEmail) || empty($password)) {
+            return response()->json(['error' => 'User credentials are missing'], 401);
+        }
 
           $response = Http::withBasicAuth($userEmail, $password)
             ->get("$this->traccarApiUrl/users?userId=" . $id);

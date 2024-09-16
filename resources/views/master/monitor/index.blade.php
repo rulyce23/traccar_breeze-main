@@ -1,3 +1,8 @@
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 <x-app-layout>
     <div class="flex ml-[40px]">
         <div class="min-h-[88vh] w-[300px] border-r border-gray-300 bg-white flex-none">
@@ -129,8 +134,6 @@
 
         </div>
         <div id="map" class="h-auto w-full"></div>
-
-
     </div>
 </x-app-layout>
 
@@ -202,29 +205,32 @@
     }).addTo(map);
     L.control.scale().addTo(map);
 
-    // Update current location function
-    function updateCurrentLocation() {
-        var currentLat = map.getCenter().lat;
-        var currentLng = map.getCenter().lng;
-        var currentLocationApiUrl = `http://192.168.1.7:8082/api/server/geocode?latitude=${currentLat}&longitude=${currentLng}`;
+  // Update current location function with improved error handling
+function updateCurrentLocation() {
+    var currentLat = map.getCenter().lat;
+    var currentLng = map.getCenter().lng;
+    var currentLocationApiUrl = `http://192.168.1.12:8082/api/server/geocode?latitude=${currentLat}&longitude=${currentLng}`;
 
-        fetch(currentLocationApiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Geocode request failed: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Assuming the data contains a location name
-                var locationName = data.name || 'Unknown location';
-                updateLocationDisplay(locationName);
-                console.log('Current location:', locationName);
-            })
-            .catch(error => {
-                console.error(error);
+    fetch(currentLocationApiUrl)
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Geocode request failed: ${response.status} - ${text}`);
             });
-    }
+        }
+        return response.json();
+    })
+    .then(data => {
+        var locationName = data.name || 'Unknown location';
+        updateLocationDisplay(locationName);
+        console.log('Current location:', locationName);
+    })
+    .catch(error => {
+        console.error('Error fetching current location:', error);
+    });
+}
+
+// Updated function to handle API requests and errors
 
     // Update location display on the map
     function updateLocationDisplay(locationName) {

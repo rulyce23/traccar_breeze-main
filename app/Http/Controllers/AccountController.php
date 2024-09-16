@@ -31,10 +31,11 @@ class AccountController extends Controller
         $token = $request->cookie('JSESSIONID');
         $now = Carbon::now();
         $userName = session('name');
+        $userAccount = session('account_type');
         $userEmail = session('email');
         $userPassword = session('password');
 
-        return view('master.account.index',['userName'=> $userName,'password'=>$userPassword, 'userx'=>$users, 'devices'=>$devices, 'token'=>$token, 'now'=>$now]);
+        return view('master.account.index',['userName'=> $userName,'userAccount'=>$userAccount,'password'=>$userPassword, 'userx'=>$users, 'devices'=>$devices, 'token'=>$token, 'now'=>$now]);
     }
 
     public function search(Request $request)
@@ -69,27 +70,73 @@ class AccountController extends Controller
             'now' => Carbon::now()
         ]);
     }
-
-
-
-
-
-
-    public function create()
-    {
-        return view('master.account.create');
-    }
+ 
     public function store(Request $request)
-    {
-        $formData = [
-            'name' => $request->input('name'),
-            'uniqueId' => $request->input('uniqueId'),
-            'phone' => $request->input('phone')
-        ];
-        $response = Http::withBasicAuth($this->username, $this->password)
-            ->post($this->traccarApiUrl . '/account', $formData);
+{
+    // Get session values
+    $userEmail = session('email');
+    $password = session('password');
+    $userName = session('name');
+    
+    // Prepare form data
+    $formData = [
+        'name' => $request->input('name'),
+        'uniqueId' => $request->input('uniqueId'),
+        'phone' => $request->input('phone'),
+        'model' => $request->input('model'),
+        'category' => $request->input('category'),
+        'contact' => $request->input('phone'),
+        'groupId' => 0,
+        'positionId' => 0,
+        'lastUpdate' => Carbon::now()->toISOString(),
+        'disabled' => $request->input('disabled', true), // Default to true if not provided
+        'attributes' => [
+        'vehicle_name' => $request->input('vehicle_name'),
+        ]
+    ];
 
-        $data = $response->json();
-        return response()->json($data);
+    // Log form data for debugging
+    Log::info('Form Data Sent to API', [
+        'data' => $formData,
+    ]);
+
+    // Send POST request
+    try {
+        // Ensure the API URL is correctly set and formed
+        $response = Http::withBasicAuth($userEmail, $password)
+                        ->acceptJson() // Ensure the API expects JSON
+                        ->post($this->traccarApiUrl . '/users', $formData);
+
+        // Log the response status and body
+        \Log::info('API Response', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+            'headers' => $response->headers(),
+        ]);
+
+        // Check if request was successful
+        if ($response->successful()) {
+            $data = $response->json();
+            return response()->json($data);
+        } else {
+            // Include API response for debugging
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create users',
+                'error' => $response->json() // Include API response for debugging
+            ], $response->status());
+        }
+    } catch (\Exception $e) {
+        // Log the exception
+        \Log::error('API Request Failed', [
+            'exception' => $e->getMessage(),
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while creating the device',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 }
