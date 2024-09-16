@@ -66,13 +66,18 @@ Route::middleware(['api.auth'])->group(
         Route::get('/device', [DeviceController::class, 'index'])->name('device.index');
         Route::get('/account', [AccountController::class, 'index'])->name('account.index');
         Route::get('/account', [AccountController::class, 'create'])->name('account.create');
-        Route::post('/account', [AccountController::class, 'store'])->name('account.store');
+        Route::post('/account', [AccountController::class, 'store'])->name('user.store');
+        Route::put('/users/{id}', [AccountController::class, 'update'])->name('user.update');
+        Route::get('/account/models', [AccountController::class, 'getDevicesModel']);
+        Route::get('/account/users', [AccountController::class, 'getUsersModel']);
+        Route::delete('/users/{id}', [AccountController::class, 'destroy'])->name('user.destroy');
+
         Route::get('/api/token', [AuthController::class, 'getToken']);
         Route::post('/account/search', [AccountController::class, 'search'])
         ->name('account.search')
         ->middleware('api.auth');
 
-
+        
         Route::post('/monitor', [MonitorController::class, 'index'])
         ->name('monitor.index')
         ->middleware('api.auth');

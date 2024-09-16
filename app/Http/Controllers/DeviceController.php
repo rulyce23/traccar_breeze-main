@@ -196,7 +196,7 @@ class DeviceController extends Controller
         $password = session('password');
     
         $validatedData = $request->validate([
-            'name' => 'required|string|max:11',
+            'name' => 'required|string|max:100',
             'uniqueId' => 'required|string|max:17',
             'phone' => 'required|string|max:14',
             'model' => 'required|string',
@@ -253,13 +253,14 @@ class DeviceController extends Controller
 
         // Periksa apakah permintaan berhasil
         if ($response->successful()) {
-            return redirect()->route('device.index')->with('success', 'Device berhasil dihapus.');
+            return redirect()->route('device.index')->with('success', 'Device data deleted success!.');
         } else {
-            return redirect()->route('device.index')->with('error', 'Gagal menghapus device.');
+            return redirect()->route('device.index')->with('error', 'Fail To Delete Device Data.');
         }
-    }
+        
+        }
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
     // Get session values
     $userEmail = session('email');
@@ -277,10 +278,10 @@ class DeviceController extends Controller
         'groupId' => 0,
         'positionId' => 0,
         'lastUpdate' => Carbon::now()->toISOString(),
-        'disabled' => $request->input('disabled', true), // Default to true if not provided
+        'disabled' => $request->input('disabled', false), // Default to false if not provided
         'attributes' => [
         'vehicle_name' => $request->input('vehicle_name'),
-        'userId' => $request->input('userId'),
+        'userId' => $request->input('userId') ?? 0,
         ]
     ];
 
@@ -306,7 +307,7 @@ class DeviceController extends Controller
         // Check if request was successful
         if ($response->successful()) {
             $data = $response->json();
-            return response()->json($data);
+            return redirect()->route('device.index')->with('success', 'New Device data successfully addedd!.');
         } else {
             // Include API response for debugging
             return response()->json([

@@ -330,8 +330,8 @@ function openModal(id) {
     })
     .then(data => {
         // Asumsikan data adalah array dan kita hanya mengambil elemen pertama
-        const device = data[0];
-        
+        const device = data.find(device => device.id === id);
+
         if (!device) {
             throw new Error('Device data not found in response');
         }
@@ -462,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         })
         .catch(error => {
-            console.error('Error fetching device models:', error);
-            alert('Failed to load device models.');
+            console.error('Error fetching user models:', error);
+            alert('Failed to load user models.');
         });
 });
 
@@ -502,8 +502,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         })
         .catch(error => {
-            console.error('Error fetching device models:', error);
-            alert('Failed to load device models.');
+            console.error('Error fetching user models:', error);
+            alert('Failed to load user models.');
         });
 });
 
