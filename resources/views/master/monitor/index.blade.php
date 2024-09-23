@@ -209,7 +209,7 @@
 function updateCurrentLocation() {
     var currentLat = map.getCenter().lat;
     var currentLng = map.getCenter().lng;
-    var currentLocationApiUrl = `http://192.168.1.12:8082/api/server/geocode?latitude=${currentLat}&longitude=${currentLng}`;
+    var currentLocationApiUrl = `api/server/geocode?latitude=${currentLat}&longitude=${currentLng}`;
 
     fetch(currentLocationApiUrl)
     .then(response => {

@@ -61,7 +61,7 @@ if(!empty($query)){
     
         // Decode JSON responses into arrays
         $users = $dataUsers->getData();
-        $devices = $dataDevices->getData();
+        $devices = $dataDevices->getData(); 
     
         $token = session('token');
         $now = Carbon::now();
