@@ -53,16 +53,16 @@ if(!empty($query)){
         // Fetch devices and users from Traccar API
         $dataDevices = $controller->devices();
         $dataUsers = $controller->users();
-    
+
         // Check if response is redirect (for example, to login)
         if ($dataDevices instanceof \Illuminate\Http\RedirectResponse || $dataUsers instanceof \Illuminate\Http\RedirectResponse) {
             return $dataDevices;
         }
-    
+
         // Decode JSON responses into arrays
         $users = $dataUsers->getData();
-        $devices = $dataDevices->getData(); 
-            
+        $devices = $dataDevices->getData();
+
         $token = session('token');
         $now = Carbon::now();
         $userName = session('name');
